@@ -16,7 +16,7 @@ train_logger = logging.getLogger(__name__)
 train_logger.setLevel(logging.INFO)
 
 # Define log file path
-log_file_path = Path('/Users/wspin/Projects/cellpose/training/training.log')  # Update to desired log file location
+log_file_path = Path('/Users/seanspinney/projects/cellpose/training/training.log')  # Update to desired log file location
 log_file_path.parent.mkdir(parents=True, exist_ok=True)  # Create directories if they don't exist
 # Clear the log file at the start of training
 with open(log_file_path, 'w') as file:
