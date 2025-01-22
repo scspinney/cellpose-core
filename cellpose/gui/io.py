@@ -477,13 +477,9 @@ def _masks_to_gui(parent, masks, outlines=None, colors=None):
     """ masks loaded into GUI """
     # get unique values
     shape = masks.shape
-    if len(fastremap.unique(masks)) != masks.max() + 1:
-        print("GUI_INFO: renumbering masks")
-        fastremap.renumber(masks, in_place=True)
-        outlines = None
-        masks = masks.reshape(shape)
-    if masks.ndim == 2:
-        outlines = None
+    masks = masks.flatten()
+    fastremap.renumber(masks, in_place=True)
+    masks = masks.reshape(shape)
     masks = masks.astype(np.uint16) if masks.max() < 2**16 - 1 else masks.astype(
         np.uint32)
     if parent.restore and "upsample" in parent.restore:
@@ -522,6 +518,9 @@ def _masks_to_gui(parent, masks, outlines=None, colors=None):
             parent.outpix_resize = parent.outpix.copy()
     else:
         parent.outpix = outlines
+        shape = parent.outpix.shape
+        fastremap.renumber(parent.outpix, in_place=True)
+        parent.outpix = np.reshape(parent.outpix, shape)
         if parent.restore and "upsample" in parent.restore:
             parent.outpix_resize = parent.outpix.copy()
             parent.outpix_orig = np.zeros_like(parent.cellpix_orig)
@@ -651,6 +650,7 @@ def _save_sets(parent):
             "diameter":
                 parent.diameter
         }
+        print(dat["masks"].shape)
         if parent.restore is not None:
             dat["img_restore"] = parent.stack_filtered
         np.save(base + "_seg.npy", dat)
@@ -692,6 +692,7 @@ def _save_sets(parent):
             "diameter":
                 parent.diameter
         }
+        print(dat["masks"].shape)
         if parent.restore is not None:
             dat["img_restore"] = parent.stack_filtered
         np.save(base + "_seg.npy", dat)
